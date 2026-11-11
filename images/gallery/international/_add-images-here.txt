@@ -1,0 +1,1 @@
+Add 1.jpg to 6.jpg here (landscape, about 1200x900 px). Unused slots show an "Add image" tile.

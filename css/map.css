@@ -1,0 +1,474 @@
+/* Worldwide presence map */
+.wmap {
+  background: radial-gradient(70% 60% at 50% 45%, #fff 0, var(--bone) 100%);
+  overflow: hidden
+}
+
+.wm-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 2rem;
+  flex-wrap: wrap
+}
+
+.wmap .lead {
+  max-width: 46ch
+}
+
+.stagewrap {
+  position: relative;
+  max-width: 1320px;
+  margin: 1rem auto 0
+}
+
+.stage {
+  --tilt: 52deg;
+  --rz: 0deg;
+  position: relative;
+  height: clamp(300px, 50vw, 680px)
+}
+
+.stage-in {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1600px;
+  perspective-origin: 50% 40%
+}
+
+.plane {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  transform-style: preserve-3d;
+  transform: translateY(-46%) rotateX(var(--tilt)) rotateZ(var(--rz))
+}
+
+.plane canvas {
+  display: block;
+  width: 100%;
+  height: 100%
+}
+
+.pin {
+  position: absolute;
+  width: 0;
+  height: 0
+}
+
+.pins {
+  position: absolute;
+  inset: 0;
+  pointer-events: none
+}
+
+.base {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-d)
+}
+
+.ring {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ping 2.6s ease-out infinite;
+  animation-delay: calc(var(--i) * .35s)
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(.3);
+    opacity: .9
+  }
+
+  100% {
+    transform: scale(2.8);
+    opacity: 0
+  }
+}
+
+.up {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0
+}
+
+.drop {
+  position: absolute;
+  left: 0;
+  bottom: 0
+}
+
+.wmap:not(.in) .drop,
+.wmap:not(.in) .base {
+  opacity: 0
+}
+
+.wmap.in .drop {
+  animation: drop .9s cubic-bezier(.2, .9, .3, 1.25) both;
+  animation-delay: calc(1.4s + var(--i) * .13s)
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-70px) scale(.6)
+  }
+
+  to {
+    opacity: 1;
+    transform: none
+  }
+}
+
+.stem {
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: 2px;
+  height: var(--h);
+  background: linear-gradient(var(--gold), rgba(140, 116, 21, .25))
+}
+
+.head {
+  position: absolute;
+  left: -15px;
+  bottom: var(--h);
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  background: linear-gradient(150deg, #E9D67F, #B9982F);
+  box-shadow: 0 10px 16px rgba(140, 116, 21, .35);
+  display: grid;
+  place-items: center;
+  transition: transform .25s
+}
+
+.head span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--gold-d);
+  font: 800 .62rem "Red Hat Display", sans-serif;
+  letter-spacing: .02em
+}
+
+.up.on .head,
+.head:hover,
+.head:focus-visible {
+  transform: scale(1.3) translateY(-3px)
+}
+
+.pin.on .ring {
+  animation-duration: 1.3s
+}
+
+.lbl {
+  position: absolute;
+  bottom: calc(var(--h) + 5px);
+  font: 700 .66rem "Red Hat Display", sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none
+}
+
+.lbl.r {
+  left: 22px
+}
+
+.lbl.l {
+  right: 22px
+}
+
+.pop {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: min(300px, 88%);
+  background: rgba(255, 255, 255, .93);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  box-shadow: 0 30px 60px rgba(38, 40, 44, .2);
+  padding: 1.2rem 1.4rem 1.3rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(.97);
+  transition: opacity .25s, transform .25s, visibility .25s
+}
+
+.pop.open {
+  opacity: 1;
+  visibility: visible;
+  transform: none
+}
+
+.pop.wide {
+  width: min(560px, 92%)
+}
+
+.pop h3 {
+  font-size: 1.3rem;
+  margin-bottom: .8rem;
+  padding-right: 1.5rem
+}
+
+.pop h3 em {
+  display: inline-block;
+  margin-left: .6rem;
+  font: 700 .62rem "Red Hat Text";
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-style: normal;
+  background: var(--gold);
+  padding: .2rem .55rem;
+  vertical-align: middle
+}
+
+.pop ul {
+  list-style: none;
+  padding: 0;
+  columns: 1;
+  column-gap: 1.5rem
+}
+
+.pop.wide ul {
+  columns: 2
+}
+
+.pop li {
+  break-inside: avoid;
+  opacity: 0;
+  transform: translateX(-8px);
+  animation: li .4s forwards;
+  animation-delay: var(--d)
+}
+
+@keyframes li {
+  to {
+    opacity: 1;
+    transform: none
+  }
+}
+
+.pop li a {
+  display: block;
+  padding: .4rem 0;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line)
+}
+
+.pop li b {
+  display: block;
+  font: 700 .95rem "Red Hat Display", sans-serif
+}
+
+.pop li small {
+  color: var(--stone);
+  font-size: .8rem;
+  line-height: 1.35;
+  display: block
+}
+
+.pop li a:hover b {
+  color: var(--gold-d)
+}
+
+.pop p {
+  color: var(--stone);
+  font-size: .95rem
+}
+
+.pop .x {
+  position: absolute;
+  right: .7rem;
+  top: .5rem;
+  border: 0;
+  background: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--stone)
+}
+
+.locs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: center;
+  margin-top: 1.5rem
+}
+
+.locs button {
+  font: 500 .9rem "Red Hat Text", sans-serif;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  padding: .5rem 1.5rem;
+  cursor: pointer;
+  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+  transition: background .2s
+}
+
+.locs button:hover,
+.locs button.on {
+  background: var(--gold);
+  border-color: var(--gold)
+}
+
+@media(max-width:900px) {
+  .lbl {
+    display: none
+  }
+
+  .head {
+    width: 24px;
+    height: 24px;
+    left: -12px
+  }
+
+  .head span {
+    width: 18px;
+    height: 18px;
+    font-size: .52rem
+  }
+}
+
+@media(max-width:1100px) {
+  .pop {
+    position: relative;
+    width: auto !important;
+    margin: 1rem var(--pad) 0;
+    display: none;
+    transform: none
+  }
+
+  .pop.open {
+    display: block
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  .ring {
+    animation: none
+  }
+
+  .wmap.in .drop {
+    animation: none
+  }
+
+  .pop li {
+    animation: none;
+    opacity: 1;
+    transform: none
+  }
+}
+
+.ring,
+.base,
+.stem,
+.lbl,
+.plane canvas {
+  pointer-events: none
+}
+
+.head {
+  pointer-events: auto
+}
+
+.stagewrap {
+  z-index: 1;
+  margin-top: 2rem
+}
+
+.arcs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none
+}
+
+.stage-in::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 3%;
+  height: 16%;
+  background: radial-gradient(closest-side, rgba(38, 40, 44, .16), transparent);
+  filter: blur(10px);
+  pointer-events: none
+}
+
+.hint {
+  display: none
+}
+
+@media(max-width:1100px) {
+  .stagewrap {
+    margin-inline: calc(var(--pad) * -1)
+  }
+
+  .plane {
+    transform: translateY(-52%) rotateX(var(--tilt)) rotateZ(var(--rz))
+  }
+
+  .stage {
+    height: clamp(440px, 46vw, 520px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch
+  }
+
+  .stage::-webkit-scrollbar {
+    display: none
+  }
+
+  .stage-in {
+    width: max(100%, 1040px);
+    flex: none
+  }
+
+  .hint {
+    display: block;
+    text-align: center;
+    font-size: .82rem;
+    color: var(--stone);
+    margin-top: .4rem;
+    transition: opacity .4s
+  }
+
+  .hint.off {
+    opacity: 0
+  }
+}
+/* Hide the world map section on phones */
+@media (max-width: 760px) {
+  .wmap {
+    display: none;
+  }
+}
